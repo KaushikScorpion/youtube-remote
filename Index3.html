@@ -14,7 +14,7 @@ function ajax_post(){
     hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     // Access the onreadystatechange event for the XMLHttpRequest object
     hr.onreadystatechange = function() {
-	    if(hr.readyState == 4 && hr.status == 200) {
+	    if(1) {
 		    var return_data = hr.responseText;
 			document.getElementById("status").innerHTML = return_data;
 	    }
