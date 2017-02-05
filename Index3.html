@@ -5,7 +5,7 @@ function ajax_post(){
     // Create our XMLHttpRequest object
     var hr = new XMLHttpRequest();
     // Create some variables we need to send to our PHP file
-    var url = "index.php";
+    var url = "http://192.168.0.88:8080/index.php";
     var fn = document.getElementById("first_name").value;
     var ln = document.getElementById("last_name").value;
     var vars = "firstname="+fn+"&lastname="+ln;
