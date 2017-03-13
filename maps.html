@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-     <title> Kaushik's Google Maps</title>
+     <title> LeadSquared Google Maps</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -55,7 +55,7 @@
 
 <div class="container">
     <div style="padding: 5px 5px 5px 5px;" class="well">
-    <div id="map" style="width:60%; display:inline-block;border:5px solid black;"></div>
+    <div id="map" style="width:60%; display:inline-block;border:5px solid black;background:url(http://www.freeiconspng.com/uploads/earth-png-28.png) no-repeat center"></div>
 
     <!--<input type="text" class="form-control" id="MapsInput" style="height:100px">-->
     <div style="display:inline-block" >
@@ -198,11 +198,12 @@
 
 
     function ShowOnMap(){
-      
+      RouteRequest = JSON.parse(document.getElementById('Input1').value);
       initMap2(false);
     }
 
     function ShowOnRoads(){
+      RouteRequest = JSON.parse(document.getElementById('Input1').value);
       initMap2(true);
      
     }
@@ -331,6 +332,7 @@ var RouteRequest =[
 
 
 function LoadTextArea(){
+
   document.getElementById("Input1").textContent=JSON.stringify(RouteRequest, undefined, 4);
 }
 
