@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-     <title> LeadSquared Google Maps</title>
+     <title> Kaushik's Google Maps</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -55,7 +55,7 @@
 
 <div class="container">
     <div style="padding: 5px 5px 5px 5px;" class="well">
-    <div id="map" style="width:60%; display:inline-block;border:5px solid black;background:url('earth.png') no-repeat center"></div>
+    <div id="map" style="width:60%; display:inline-block;border:5px solid black;background:url(http://www.freeiconspng.com/uploads/earth-png-28.png) no-repeat center"></div>
 
     <!--<input type="text" class="form-control" id="MapsInput" style="height:100px">-->
     <div style="display:inline-block" >
@@ -90,6 +90,9 @@
     var biglat       ;
     var smalllong    ;
     var biglong      ;
+     var flightPaths = [];
+
+ 
 
 
      function sortFunction(a, b) {
@@ -100,6 +103,37 @@
         return (a[0] < b[0]) ? -1 : 1;
     }
 }
+
+//animations
+function toggleBounce(marker) {
+        if (marker.getAnimation() !== null) {
+          marker.setAnimation(null);
+        } else {
+          marker.setAnimation(google.maps.Animation.BOUNCE);  
+          window.setTimeout(function() {
+          marker.setAnimation(null);
+        }, 2000);
+        }
+      }
+//
+
+ function animateCircle(line) {
+              var count = 0;
+             window.setInterval(function(){
+              count = (count + 1) % 200;
+              var icons = line.get('icons');
+              icons[0].offset = (count / 2) + '%';
+              line.set('icons', icons);
+             }, 20);
+      }
+
+function doSetTimeout(x,time){
+window.setTimeout(function() {
+           console.log(x);
+           animateCircle(x);
+         },time);
+      }
+
       function initMap() {
       //  var geolocation = { lat:11.00, lng:22.0 };
     
@@ -107,6 +141,7 @@
     biglat       = Locations[0][3];
     smalllong    = Locations[0][4];
     biglong      = Locations[0][4];
+
      // Locations = [['Bengaluru','06:00 AM',12.9716, 77.5946],['Coimbatore','11:00 PM',11.0168, 76.9558],['Chennai','02:00 PM',13.0827,80.2707],['Hyderabad','11:00 AM +1 Day',17.3850,78.4867]];
 		  map = new google.maps.Map(document.getElementById('map'), {
           zoom: 6,
@@ -142,10 +177,12 @@
             position: new google.maps.LatLng(Locations[i][3],Locations[i][4]),
             map: map,
             title: "Any title",
+            animation: google.maps.Animation.DROP,
             Label: Locations[i][0]+""
           };
 
          var marker = new google.maps.Marker(markerObj);
+       
 
           google.maps.event.addListener(marker, 'click', (function(marker, i) {
           return function() {
@@ -155,23 +192,27 @@
                 var contentString = "Id: "+Locations[i][0]+"<br> Place: "+Locations[i][1];
               infowindow.setContent(contentString);
               infowindow.open(map, marker);
+              toggleBounce(marker);
           }
           })(marker, i));
       
         }
 
-       var lineSymbol = {
-          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-           strokeColor: '#097700',
-        };
+       
 
     ;// = new Array(4);
+       
         for(i=0;i<Locations.length-1;i++)
         {
             var flightPlanCoordinates = []
             
             flightPlanCoordinates.push( new google.maps.LatLng(Locations[i][3],Locations[i][4]));
             flightPlanCoordinates.push( new google.maps.LatLng(Locations[i+1][3],Locations[i+1][4]));
+
+             var lineSymbol = {
+          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+          strokeColor: '#097700',
+        };
 
             var flightPath = new google.maps.Polyline({
             path: flightPlanCoordinates,
@@ -184,10 +225,17 @@
             strokeOpacity: 1.0,
             strokeWeight: 2
           });
-
+         
           flightPath.setMap(map);
+          flightPaths.push(flightPath);
         }
 
+        console.log("flightpaths");
+        console.log(flightPaths);
+        for(i=0;i<flightPaths.length;i++)
+        {
+          doSetTimeout(flightPaths[i],0);
+        }
      
       
       //console.log(flightPlanCoordinates);
@@ -448,7 +496,8 @@ function LoadTextArea(){
           }
           marker.setPosition(new google.maps.LatLng(RouteRequest[i].Lat,RouteRequest[i].Lng));
           marker.setLabel({text: RouteRequest[i].Id+"", color: "Black", fontSize: "10px" });
-
+          marker.setAnimation(google.maps.Animation.DROP);
+          
           if(i>0)
            var text ="<strong>Id:</strong> "+RouteRequest[i].Id+"</br><strong>Time:</strong> "+RouteRequest[i].Time +"</br><strong> Location:</strong> " +RouteRequest[i].Place + "</br><strong>Distance From </strong>" +RouteRequest[i-1].Place +": "+myRoute[i-1].distance.text ;
           else
@@ -479,6 +528,7 @@ function LoadTextArea(){
           // of the step.
           stepDisplay.setContent(text);
           stepDisplay.open(map, marker);
+          toggleBounce(marker);
         });
       }
 
