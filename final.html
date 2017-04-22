@@ -1,0 +1,150 @@
+<html>
+<body>
+<!-- 
+   
+<div id="player"></div>
+<div> <button onclick="Play()">click </button>
+</div>
+-->
+<div onclick="readTextFile()"  id="n">click </div>
+<div id="player"></div>
+<script type="text/javascript">
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api"; 
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+//setTimeout(Play(),1000);
+     // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '100%',
+          width: '100%',
+          videoId: 'ZmZ10DvqgkE',
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+
+      // 4. The API will call this function when the video player is ready.
+      function onPlayerReady(event) {
+        
+        event.target.playVideo();
+playercontroller();
+    
+}
+
+      // 5. The API calls this function when the player's state changes.
+      //    The function indicates that when playing a video (state=1),
+      //    the player should play for six seconds and then stop.
+      var done = false;
+      function onPlayerStateChange(event) {
+       /* if (event.data == YT.PlayerState.PLAYING && !done) {
+          setTimeout(stopVideo, 6000);
+          done = true;
+        }*/
+      }
+      function stopVideo() {
+        player.stopVideo();
+      }
+
+function readTextFile()
+{
+    var rawFile = new XMLHttpRequest();
+
+    rawFile.open("GET", " https://helloapp-35d94.firebaseio.com/videoId.json", true);
+    rawFile.onreadystatechange = function ()
+    {
+             
+  //       <!-- if(allText  != "")  -->
+     if(rawFile.readyState === 4 && rawFile.status === 200)
+         {
+         allText = rawFile.responseText;
+         allText=allText.replace(/"/g,"");
+         document.getElementById("n").innerHTML = allText;
+         //alert(document.getElementById("n").innerHTML );
+         //console.log(rawFile.responseText);
+      
+player.stopVideo();
+      player.loadVideoById(document.getElementById("n").innerHTML, 5, "large");
+       player.playVideo();
+
+         }
+}
+    rawFile.send();
+return 0;
+}
+
+
+
+
+var ret;
+var loaded;
+function playercontroller(){
+ret=readTextFile();
+if(ret===0)
+{
+console.log(ret);
+//Play();
+}
+/*
+function myLoop () {           
+   setTimeout(function(){readTextFile();
+   setTimeout(myLoop(),5000);}, 5000);} 
+*/
+}
+var allText;
+var check;
+
+/*
+
+      function Play(){
+      player.stopVideo();
+      player.loadVideoById(document.getElementById("n").innerHTML, 5, "large");
+       player.playVideo();
+      }
+*/
+console.log("outer"); 
+//myLoop();
+/*function rot() {           
+console.log("myloop");
+var ch;
+ch=change(); 
+if(ch==0)
+{
+setTimeout(rot(),10000);
+ } 
+ }*/ 
+function change()
+{
+//console.log("change"); 
+    var newFile = new XMLHttpRequest();
+newFile.open("GET", " https://helloapp-35d94.firebaseio.com/videoId.json", true);
+    newFile.onreadystatechange = function ()
+    {
+//console.log("done");
+     if(newFile.readyState === 4 && newFile.status === 200)
+         {
+         //alert("i am here");
+         local = newFile.responseText;
+         local=local.replace(/"/g,"");
+ if(local!=allText && (local!=null ||local!=undefined))
+{
+//console.log("kkk");
+ readTextFile();
+//return 1;
+}
+}
+}
+newFile.send();
+return 0;
+}
+setInterval(change, 3000);
+</script>
+</body>
+</html>
