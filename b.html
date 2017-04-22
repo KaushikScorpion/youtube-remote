@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+
+//section Global Variables
+var GbResponse;
+var e;
+//section Angular APP
+var myApp = angular.module('myApp',[]);
+myApp.controller("valueController", function($scope) {
+  
+ 
+  $scope.playableLogo= "MaskPlayLogo.png";
+//  $scope.data = [{id:'1'},{id:'2'}];
+    $scope.Search = function()  {
+         var xhttp = new XMLHttpRequest();
+         xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 200) {
+               GbResponse = this.responseText;
+               GbResponse = JSON.parse(GbResponse);
+               console.log(GbResponse);
+               if(GbResponse.items.length == 0)
+               {
+                $("#demo").html("Your search yielded no results.")
+               }
+               SetValues();
+               
+             }
+        };
+        xhttp.open("GET", "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q="+document.getElementById("VideoId").value.replace(" ","+")+"&key=AIzaSyD-wG41-3mgTn_d6ZODIweZ3HGjlWGyLj0", true); //&type=video&videoEmbeddable=true
+        xhttp.send();
+        };
+
+
+
+    SetValues = function() {
+        $scope.data = GbResponse.items;
+        console.log("Searched");
+        $scope.$apply();
+    };
+
+});
+//
+function RestorePlayableLogo(videoId){
+      console.log(videoId.id);
+      SetSelectedVideoId(videoId.id);
+      for(i=0;i<$(".overlay").length;i++){$(".overlay")[i].src = "MaskPlayLogo.png";}
+       $(videoId).attr('src','playing.gif');
+      setTimeout(function () {   $(videoId).attr('src','playing.png');  }, 2000)    
+}
+
+function SetSelectedVideoId(videoId){
+    var data = videoId.replace("overlay-","");
+    data = JSON.stringify(data);
+    var x=new XMLHttpRequest();
+    x.open("put", "https://helloapp-35d94.firebaseio.com/videoId.json");
+    console.log(data);
+    x.send(data);
+}
+</script>
+</head>
+
+<body>
+
+
+
+<div ng-app="myApp">
+
+    <div id="divid" ng-controller="valueController" class="container-fluid">
+     <div class="col-sm-9 video">
+        <h3> <img src="YouTube_Logo.png" style="margin-right:10px;height:30px;">Remote Controller</h3>
+    </div>
+        <form class="navbar-form video" role="search">
+            <div class="input-group add-on" style="width:100%">
+            <input class="form-control" placeholder="Search videos.." name="srch-term" id="VideoId" type="text">
+            <div class="input-group-btn">
+                <button class="btn btn-default" ng-click="Search()" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+            </div>
+            </div>
+        </form>
+
+        <div class="col-sm-9 well video" ng-repeat="item in data" id="{{item.id.videoId}}">
+        <div class="col-sm-3 video-thumbnail-wrap">
+        <img src="{{playableLogo}}" name="overlay" id="overlay-{{item.id.videoId}}" class="overlay" onclick="RestorePlayableLogo(this);" > <!--PlayThis(this);-->
+        <img  class="video-thumbnail" src="{{item.snippet.thumbnails.medium.url}}" />
+        </div>
+        <div class="col-sm-9 video-details-wrap">
+        <p class="video-title">{{item.snippet.title}}</p>
+        <p class="video-description">{{item.snippet.description}}</p>
+        <div>
+        </div>
+
+
+    </div>
+</div>
+
+<div class="video" id="demo"></div>
+
+</body>
+
+<style>
+.video {
+   margin: 10px;
+   padding:0px;
+ 
+}   
+.video-thumbnail {
+ max-width:100%;
+}
+.search-box{
+}
+.video-thumbnail-wrap{
+padding:0px;
+}
+.video-details-wrap{
+}
+.video-title{
+    font-size: 20px;
+    color: dodgerblue;
+}
+
+.overlay{
+opacity:0.5;
+height:100%;
+width:100%;
+position:absolute; /*You may also use fixed depending on your needs.*/
+left:0;
+top:0; /*If you want it at the bottom you probably want bottom:0 instead*/
+z-index: 999;
+}
+
+</style>
+</html>
