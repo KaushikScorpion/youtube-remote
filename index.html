@@ -60,7 +60,7 @@ function SetSelectedVideoId(videoId){
     var data = videoId.replace("overlay-","");
     data = JSON.stringify(data);
     var x=new XMLHttpRequest();
-    x.open("put", "https://helloapp-35d94.firebaseio.com/videoId.json");
+    x.open("put", "https://helloapp-35d94.firebaseio.com/YoutubeRemote/videoId.json");
     console.log(data);
     x.send(data);
 }
